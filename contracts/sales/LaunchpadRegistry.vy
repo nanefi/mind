@@ -36,6 +36,10 @@ event ListSale:
     token: indexed(address)
 
 
+event UpdateSale:
+    saleId: indexed(uint256)
+
+
 event ChangeGroup:
     group: indexed(address)
     status: bool
@@ -76,6 +80,8 @@ def listSale(
         Sale metadata
         This is used within the front-end for showing details about
         the sale.
+    @return
+        Sale ID
     @dev
         Only group can list new sales.
     """
@@ -96,6 +102,34 @@ def listSale(
     log ListSale(msg.sender, launcher, saleToken)
 
     return saleId
+
+
+@external
+def editSale(
+    saleId: uint256,
+    name: String[64],
+    metadata: String[64]
+):
+    """
+    @notice
+        Change name and metadata of an sale
+    @param saleId
+        Sale ID
+    @param name
+        Sale name
+    @param metadata
+        Sale metadata
+    @dev
+        Only group can edit sale
+        Sale token must not be ZERO_ADDRESS
+    """
+    assert self.group[msg.sender]
+    assert self.sales[saleId].token != ZERO_ADDRESS
+
+    self.sales[saleId].name = name
+    self.sales[saleId].metadata = metadata
+
+    log UpdateSale(saleId)
 
 
 @view
