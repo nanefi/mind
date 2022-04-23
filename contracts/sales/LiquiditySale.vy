@@ -194,13 +194,14 @@ def purchase():
 def burn():
     """
     @notice
-        Burn remaining sale tokens in this contract after sale ends
+        Transfer remaining sale tokens in this contract after sale ends
+        to the beneficiary of sale
     @dev
         Reverts if sale did not end yet.
     """
     assert block.timestamp > self.saleDates[1], "Sale::burn: Sale did not end"
 
     self.saleToken.transfer(
-        ZERO_ADDRESS,
+        self.beneficiary,
         self.saleToken.balanceOf(self)
     )
